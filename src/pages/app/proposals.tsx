@@ -48,6 +48,8 @@ export function Proposals() {
 
   const [novaEmpresa, setNovaEmpresa] = useState("");
   const [novoServico, setNovoServico] = useState("");
+  
+  const [searchQuery, setSearchQuery] = useState("");
 
   const colunas = ['Rascunhos', 'Aguardando Aprovação', 'Em Revisão (Recusados)', 'Aceitas (Contratos gerados)'];
 
@@ -74,6 +76,11 @@ export function Proposals() {
     setNovaEmpresa(""); setNovoServico(""); setIsDrawerOpen(false);
   };
 
+  const propostasFiltradas = propostas.filter(p => 
+    p.empresa.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    p.servico.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="flex flex-col h-full font-sans p-6">
       
@@ -84,7 +91,13 @@ export function Proposals() {
         <div className="flex items-center gap-4">
           <div className="relative w-full max-w-[300px]">
             <Search className="absolute left-3.5 top-2.5 text-zinc-500" size={18} />
-            <input type="text" placeholder="Pesquisar..." className="w-full bg-[#111111] border border-zinc-800 rounded-lg py-2 pl-10 pr-4 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-[#79C6C0]" />
+            <input 
+              type="text" 
+              placeholder="Pesquisar..." 
+              value={searchQuery} 
+              onChange={(e) => setSearchQuery(e.target.value)} 
+              className="w-full bg-[#111111] border border-zinc-800 rounded-lg py-2 pl-10 pr-4 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-[#79C6C0]" 
+            />
           </div>
           <button onClick={() => setIsDrawerOpen(true)} className="bg-[#79C6C0]/20 border border-[#79C6C0]/50 hover:bg-[#79C6C0]/40 text-white px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-medium transition-all whitespace-nowrap cursor-pointer">
             <Plus size={18} className="text-[#79C6C0]" /> Nova proposta
@@ -107,7 +120,8 @@ export function Proposals() {
               <MoreHorizontal size={16} className="cursor-pointer hover:text-white" />
             </div>
             
-            {propostas.filter(p => p.status === col).map(proposta => (
+            {/* Renderizando as propostas FILTRADAS ao invés das originais */}
+            {propostasFiltradas.filter(p => p.status === col).map(proposta => (
               <Card 
                 key={proposta.id} 
                 id={proposta.id}
